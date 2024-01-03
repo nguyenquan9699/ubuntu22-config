@@ -1,0 +1,24 @@
+---
+- name: Install Development Tools
+  hosts: localhost
+  become: yes  # Run tasks with sudo
+
+  vars:
+    dev_packages:
+      - git
+      - vim
+      - htop
+      - curl
+      - net-tools
+      - docker.io
+      - mysql-server
+      - nginx
+      - postgresql
+      - apache2
+
+  tasks:
+    - name: Install Development Tools
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items: "{{ dev_packages }}"

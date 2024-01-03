@@ -1,0 +1,55 @@
+---
+- name: Install Docker and Enable Service
+  hosts: k8s_master
+  become: true
+
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+    - name: Enable and start Docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+- name: Install Kubernetes
+  hosts: k8s_master
+  tasks:
+
+    - name: Add Kubernetes apt key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+    - name: Add Kubernetes apt repository
+      apt_repository:
+        repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+
+- name: Install Kubernetes Components
+  hosts: k8s_master
+  become: true
+
+  tasks:
+    - name: Install kubeadm, kubelet, and kubectl
+      apt:
+        name:
+          - kubeadm
+          - kubelet
+          - kubectl
+        state: present
+
+- name: Install Helm
+  hosts: k8s_master
+  become: true
+
+  tasks:
+    - name: Download Helm installation script
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+    - name: Make the script executable
+      ansible.builtin.command: chmod +x /tmp/get_helm.sh
+    - name: Run Helm installation script
+      ansible.builtin.command: /tmp/get_helm.sh

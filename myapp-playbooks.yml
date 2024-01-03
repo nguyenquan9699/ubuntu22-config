@@ -1,0 +1,39 @@
+---
+- name: Install Visual Studio Code
+  hosts: localhost
+  become: yes  # Run tasks with sudo
+
+  tasks:
+    - name: Add Microsoft GPG key
+      apt_key:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        state: present
+
+    - name: Add Visual Studio Code repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+        state: present
+
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
+
+    - name: Install Visual Studio Code
+      apt:
+        name: code
+        state: present
+
+- name: Install Google Chrome
+  hosts: localhost
+  become: yes  # Run tasks with sudo
+
+  tasks:
+    - name: Download Google Chrome package
+      get_url:
+        url: "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+        dest: "/tmp/google-chrome-stable_current_amd64.deb"
+
+    - name: Install Google Chrome
+      apt:
+        deb: "/tmp/google-chrome-stable_current_amd64.deb"
+        state: present

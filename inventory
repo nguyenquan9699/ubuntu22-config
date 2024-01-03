@@ -1,0 +1,5 @@
+[k8s_master]
+localhost ansible_connection=local
+
+[jenkins_master]
+localhost ansible_connection=local

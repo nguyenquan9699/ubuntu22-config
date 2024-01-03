@@ -7,6 +7,7 @@
     dev_packages:
       - git
       - vim
+      - tmux
       - htop
       - curl
       - net-tools
@@ -15,6 +16,7 @@
       - nginx
       - postgresql
       - apache2
+      - unzip
 
   tasks:
     - name: Install Development Tools

@@ -1,0 +1,76 @@
+---
+# - name: Update apt packages
+#   hosts: localhost
+#   become: true
+
+#   tasks:
+#     - name: Update apt packages
+#       apt:
+#         update_cache: yes
+
+- name: Install Jenkins
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Install Java 11
+      apt:
+        name: openjdk-11-jdk
+        state: present
+
+    - name: Add Jenkins repository key
+      apt_key:
+        url: https://pkg.jenkins.io/debian/jenkins.io.key
+        state: present
+      ignore_errors: yes
+
+    - name: Add Jenkins repository
+      apt_repository:
+        repo: deb http://pkg.jenkins.io/debian-stable binary/
+        state: present
+
+    - name: Install Jenkins
+      apt:
+        name: jenkins
+        state: present
+
+    - name: Start Jenkins service
+      service:
+        name: jenkins
+        state: started
+        enabled: yes
+
+- name: Install Python and Pip
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Install Python and Pip
+      apt:
+        name: 
+          - python3
+          - python-pip
+        state: present
+
+- name: Install Terraform on Linux
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Download Terraform binary
+      get_url:
+        url: https://releases.hashicorp.com/terraform/0.15.0/terraform_0.15.0_linux_amd64.zip
+        dest: /tmp/terraform.zip
+
+    - name: Unzip Terraform binary
+      command: "unzip /tmp/terraform.zip -d /usr/local/bin/"
+
+    - name: Set Terraform executable permissions
+      file:
+        path: /usr/local/bin/terraform
+        mode: '0755'
+
+    - name: Remove temporary Terraform zip file
+      file:
+        path: /tmp/terraform.zip
+        state: absent

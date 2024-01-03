@@ -22,6 +22,30 @@
       apt:
         name: code
         state: present
+        
+- name: Install TablePlus
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: Add TablePlus GPG key
+      apt_key:
+        url: https://deb.tableplus.com/apt.tableplus.com.gpg.key
+        state: present
+
+    - name: Add TablePlus repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://deb.tableplus.com/debian/22 tableplus main"
+        state: present
+
+    - name: Update package list
+      apt:
+        update_cache: yes
+
+    - name: Install TablePlus
+      apt:
+        name: tableplus
+        state: present
 
 - name: Install Google Chrome
   hosts: localhost

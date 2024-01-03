@@ -74,3 +74,13 @@
       file:
         path: /tmp/terraform.zip
         state: absent
+- name: Install AWS CLI
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Install AWS CLI
+      apt:
+        name: 
+          - awscli
+        state: present

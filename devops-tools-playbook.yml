@@ -59,21 +59,17 @@
   tasks:
     - name: Download Terraform binary
       get_url:
-        url: https://releases.hashicorp.com/terraform/0.15.0/terraform_0.15.0_linux_amd64.zip
+        url: https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_linux_amd64.zip
         dest: /tmp/terraform.zip
 
     - name: Unzip Terraform binary
-      command: "unzip /tmp/terraform.zip -d /usr/local/bin/"
+      command: "unzip -o /tmp/terraform.zip -d /usr/local/bin/"
 
     - name: Set Terraform executable permissions
       file:
         path: /usr/local/bin/terraform
         mode: '0755'
 
-    - name: Remove temporary Terraform zip file
-      file:
-        path: /tmp/terraform.zip
-        state: absent
 - name: Install AWS CLI
   hosts: localhost
   become: true

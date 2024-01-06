@@ -3,3 +3,6 @@ localhost ansible_connection=local
 
 [jenkins_master]
 localhost ansible_connection=local
+
+[monitor_server]
+localhost ansible_connection=local

@@ -1,0 +1,50 @@
+---
+- name: Deploy Grafana, Loki, Prometheus, and Alertmanager Containers with Persistent Volumes
+  hosts: monitor_server
+  become: yes
+
+  vars:
+    services:
+      - name: grafana
+        image: grafana/grafana:latest
+        port_mapping: "3000:3000"
+        data_volume: /var/lib/grafana/data
+
+      - name: loki
+        image: grafana/loki:latest
+        port_mapping: "3100:3100"
+        data_volume: /var/lib/loki/data
+
+      - name: prometheus
+        image: prom/prometheus:latest
+        port_mapping: "9090:9090"
+        data_volume: /var/lib/prometheus/data
+
+      - name: alertmanager
+        image: prom/alertmanager:latest
+        port_mapping: "9093:9093"
+        data_volume: /var/lib/alertmanager/data
+
+  tasks:
+    - name: Create Docker network
+      community.general.docker_network:
+        name: internal
+        state: present
+    - name: Ensure persistent volume directories exist
+      ansible.builtin.file:
+        path: "{{ item.data_volume }}"
+        state: directory
+      loop: "{{ services }}"
+
+    - name: Pull Docker images and run containers
+      community.general.docker_container:
+        name: "{{ item.name }}"
+        image: "{{ item.image }}"
+        state: started
+        ports:
+          - "{{ item.port_mapping }}"
+        volumes:
+          - "{{ item.name }}:/data"
+        networks:
+          - name: internal
+      loop: "{{ services }}"

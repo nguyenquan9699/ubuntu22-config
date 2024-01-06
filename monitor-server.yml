@@ -8,17 +8,17 @@
       - name: grafana
         image: grafana/grafana:latest
         port_mapping: "3000:3000"
-        data_volume: /path/to/grafana/data
+        data_volume: /var/lib/grafana/data
 
       - name: loki
         image: grafana/loki:latest
         port_mapping: "3100:3100"
-        data_volume: /path/to/loki/data
+        data_volume: /var/lib/loki/data
 
       - name: prometheus
         image: prom/prometheus:latest
         port_mapping: "9090:9090"
-        data_volume: /path/to/prometheus/data
+        data_volume: /var/lib/prometheus/data
 
       - name: alertmanager
         image: prom/alertmanager:latest
@@ -26,6 +26,10 @@
         data_volume: /var/lib/alertmanager/data
 
   tasks:
+    - name: Create Docker network
+      community.general.docker_network:
+        name: internal
+        state: present
     - name: Ensure persistent volume directories exist
       ansible.builtin.file:
         path: "{{ item.data_volume }}"
@@ -41,4 +45,6 @@
           - "{{ item.port_mapping }}"
         volumes:
           - "{{ item.name }}:/data"
+        networks:
+          - name: internal
       loop: "{{ services }}"
